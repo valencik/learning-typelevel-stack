@@ -45,6 +45,7 @@ lazy val root = (project in file("."))
 
       "org.scalatest"   %% "scalatest"           % ScalaTestVersion  % Test,
       "org.scalacheck"  %% "scalacheck"          % ScalaCheckVersion % Test
-    )
+    ),
+    ensimeScalaVersion in ThisBuild := scalaVersion.value
   )
 
