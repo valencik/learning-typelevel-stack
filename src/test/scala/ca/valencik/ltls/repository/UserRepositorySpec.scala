@@ -9,7 +9,7 @@ class UserRepositorySpec extends RepositorySpec {
 
   private val repo = new PostgresUserRepository[IO](transactor)
 
-  test("Find a user"){
+  test("find a user"){
     IOAssertion {
       for {
         user <- repo.findUser(users.head.username)
@@ -22,7 +22,7 @@ class UserRepositorySpec extends RepositorySpec {
     }
   }
 
-  test("Not find a fake user"){
+  test("not find a fake user"){
     IOAssertion {
       for {
         user <- repo.findUser(UserName("fakeuser"))
@@ -32,7 +32,7 @@ class UserRepositorySpec extends RepositorySpec {
     }
   }
 
-  test("find user query") {
+  test("check find user query") {
     check(UserStatement.findUser(users.head.username))
   }
 
