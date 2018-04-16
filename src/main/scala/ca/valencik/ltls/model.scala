@@ -2,13 +2,13 @@ package ca.valencik.ltls
 
 object model {
 
-  case class Email(value: String) extends AnyVal
+  case class Email(value: String)    extends AnyVal
   case class UserName(value: String) extends AnyVal
 
   case class User(username: UserName, email: Email)
 
   // Business errors
-  sealed trait ApiError extends Product with Serializable
+  sealed trait ApiError                       extends Product with Serializable
   case class UserNotFound(username: UserName) extends ApiError
 
   // Http model

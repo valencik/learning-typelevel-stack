@@ -13,10 +13,11 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class UserHttpEndpoint[F[_] : Effect](userService: UserService[F])
-                                     (implicit H: HttpErrorHandler[F]) extends Http4sDsl[F] {
+class UserHttpEndpoint[F[_]: Effect](userService: UserService[F])(
+    implicit H: HttpErrorHandler[F])
+    extends Http4sDsl[F] {
 
-  implicit def createUserDecoder[A : Decoder]: EntityDecoder[F, A] = jsonOf[F, A]
+  implicit def createUserDecoder[A: Decoder]: EntityDecoder[F, A] = jsonOf[F, A]
 
   val service: HttpService[F] = HttpService[F] {
 
@@ -37,23 +38,30 @@ class UserHttpEndpoint[F[_] : Effect](userService: UserService[F])
     // Create a user
     case req @ POST -> Root =>
       req.decode[CreateUser] { createUser =>
-        UserValidation.validateCreateUser(createUser).fold(
-          errors  => BadRequest(errors.toList.asJson),
-          user    => userService.addUser(user) flatMap { either =>
-            either.fold(H.handle, _ => Created())
-          }
-        )
+        UserValidation
+          .validateCreateUser(createUser)
+          .fold(
+            errors => BadRequest(errors.toList.asJson),
+            user =>
+              userService.addUser(user) flatMap { either =>
+                either.fold(H.handle, _ => Created())
+            }
+          )
       }
 
     // Update a user
     case req @ PUT -> Root / username =>
       req.decode[UpdateUser] { updateUser =>
-        UserValidation.validateUpdateUser(updateUser).fold(
-          errors  => BadRequest(errors.toList.asJson),
-          email   => userService.updateUser(User(UserName(username), email)) flatMap { either =>
-            either.fold(H.handle, _ => Ok())
-          }
-        )
+        UserValidation
+          .validateUpdateUser(updateUser)
+          .fold(
+            errors => BadRequest(errors.toList.asJson),
+            email =>
+              userService.updateUser(User(UserName(username), email)) flatMap {
+                either =>
+                  either.fold(H.handle, _ => Ok())
+            }
+          )
       }
 
     // Delete a user
@@ -66,4 +74,3 @@ class UserHttpEndpoint[F[_] : Effect](userService: UserService[F])
   }
 
 }
-

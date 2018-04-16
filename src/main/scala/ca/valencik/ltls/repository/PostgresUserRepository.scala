@@ -12,10 +12,12 @@ import doobie.util.transactor.Transactor
 
 // It requires a created database `users` with db user `postgres` and password `postgres`
 // See `users.sql` file in resources.
-class PostgresUserRepository[F[_] : Async](xa: Transactor[F]) extends UserRepository[F] {
+class PostgresUserRepository[F[_]: Async](xa: Transactor[F])
+    extends UserRepository[F] {
 
   override def findUser(username: UserName): F[Option[User]] = {
-    val statement: ConnectionIO[UserDTO] = UserStatement.findUser(username).unique
+    val statement: ConnectionIO[UserDTO] =
+      UserStatement.findUser(username).unique
 
     // You might have more than one query involving joins.
     // In such case a for-comprehension would be better
@@ -37,4 +39,3 @@ object UserStatement {
   }
 
 }
-

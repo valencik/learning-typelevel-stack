@@ -10,11 +10,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 // The only place where the Effect is defined. You could change it for `monix.eval.Task` for example.
 object Server extends HttpServer[IO]
 
-class HttpServer[F[_] : Effect] extends StreamApp[F] {
+class HttpServer[F[_]: Effect] extends StreamApp[F] {
 
   private val ctx = new Module[F]
 
-  override def stream(args: List[String], requestShutdown: F[Unit]): Stream[F, ExitCode] =
+  override def stream(args: List[String],
+                      requestShutdown: F[Unit]): Stream[F, ExitCode] =
     Scheduler(corePoolSize = 2) flatMap { implicit scheduler =>
       BlazeBuilder[F]
         .bindHttp() // Default address `localhost:8080`
