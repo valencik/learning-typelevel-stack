@@ -1,5 +1,6 @@
 package ca.valencik.ltls.repository
 
+import ca.valencik.ltls.model.UserName
 import cats.effect.IO
 import ca.valencik.ltls.IOAssertion
 import ca.valencik.ltls.TestUsers._
@@ -21,10 +22,10 @@ class UserRepositorySpec extends RepositorySpec {
     }
   }
 
-  test("NOT find a user"){
+  test("Not find a fake user"){
     IOAssertion {
       for {
-        user <- repo.findUser(users.last.username)
+        user <- repo.findUser(UserName("fakeuser"))
       } yield {
         assert(user.isEmpty)
       }
