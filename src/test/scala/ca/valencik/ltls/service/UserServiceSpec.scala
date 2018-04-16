@@ -16,7 +16,7 @@ class UserServiceSpec extends FlatSpecLike with Matchers {
 
   it should "fail retrieving an user" in IOAssertion {
     EitherT(TestUserService.service.findUser(UserName("xxx"))).leftMap { error =>
-      error shouldBe a [UserNotFound]
+      error shouldBe a[UserNotFound]
     }.value
   }
 
