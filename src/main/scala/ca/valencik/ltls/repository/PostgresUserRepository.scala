@@ -32,14 +32,9 @@ class PostgresUserRepository[F[_]: Async](xa: Transactor[F])
   override def findAll(): F[Option[List[User]]] = {
     val statement: ConnectionIO[List[UserDTO]] = UserStatement.findAll.to[List]
 
-    // You might have more than one query involving joins.
-    // In such case a for-comprehension would be better
     val program: ConnectionIO[List[User]] = statement.map(_.map(_.toUser))
 
-    program.map(Option.apply).transact(xa).recoverWith {
-      // In case the user is not unique in your db. Check out Doobie's docs.
-      case UnexpectedEnd => Async[F].delay(None)
-    }
+    program.map(Option.apply).transact(xa)
   }
 
 }
