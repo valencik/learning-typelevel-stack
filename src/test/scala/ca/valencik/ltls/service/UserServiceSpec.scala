@@ -20,4 +20,10 @@ class UserServiceSpec extends FlatSpecLike with Matchers {
     }.value
   }
 
+  it should "retrieve all users" in IOAssertion {
+    EitherT(TestUserService.service.findAll).map { allUsers =>
+      allUsers shouldBe users
+    }.value
+  }
+
 }

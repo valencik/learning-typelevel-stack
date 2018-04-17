@@ -33,6 +33,19 @@ class UserHttpEndpointSpec extends UserHttpEndpointFixture with FlatSpecLike wit
     }
   }
 
+  it should "find all users" in IOAssertion {
+    val allUsersString = users
+      .map{u => s"""{"username":"${u.username.value}","email":"${u.email.value}"}"""}
+      .mkString("[", ",", "]")
+    val request = Request[IO](uri = Uri(path = "/"))
+    httpService(request).value.flatMap { task =>
+      task.fold(IO(fail("Empty response")) *> IO.unit) { response =>
+        IO(response.status should be (Status.Ok)) *>
+        IO(response.body.asString shouldBe allUsersString)
+      }
+    }
+  }
+
   it should "Create a user" in IOAssertion {
     for {
       req   <- Request[IO](method = Method.POST).withBody(CreateUser("root", "root@unix.org"))

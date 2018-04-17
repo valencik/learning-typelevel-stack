@@ -10,6 +10,7 @@ object model {
   // Business errors
   sealed trait ApiError                       extends Product with Serializable
   case class UserNotFound(username: UserName) extends ApiError
+  case object NoUsersFound                    extends ApiError
 
   // Http model
   case class CreateUser(username: String, email: String)

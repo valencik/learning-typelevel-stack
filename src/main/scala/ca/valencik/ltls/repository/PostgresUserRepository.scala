@@ -29,12 +29,25 @@ class PostgresUserRepository[F[_]: Async](xa: Transactor[F])
     }
   }
 
+  override def findAll(): F[Option[List[User]]] = {
+    val statement: ConnectionIO[List[UserDTO]] = UserStatement.findAll.to[List]
+
+    val program: ConnectionIO[List[User]] = statement.map(_.map(_.toUser))
+
+    program.map(Option.apply).transact(xa)
+  }
+
 }
 
 object UserStatement {
 
   def findUser(username: UserName): Query0[UserDTO] = {
     sql"SELECT * FROM api_user WHERE username=${username.value}"
+      .query[UserDTO]
+  }
+
+  def findAll: Query0[UserDTO] = {
+    sql"SELECT * FROM api_user"
       .query[UserDTO]
   }
 

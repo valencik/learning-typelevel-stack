@@ -32,8 +32,25 @@ class UserRepositorySpec extends RepositorySpec {
     }
   }
 
+  test("find all users"){
+    IOAssertion {
+      for {
+        allUsers <- repo.findAll
+      } yield {
+        allUsers.fold(fail("No users")) { us =>
+          assert(us.size == 2)
+          assert(us.contains(users.head))
+        }
+      }
+    }
+  }
+
   test("check find user query") {
     check(UserStatement.findUser(users.head.username))
+  }
+
+  test("check find all users query") {
+    check(UserStatement.findAll)
   }
 
 }
